@@ -12,7 +12,7 @@ class GeminiAnalyst:
         # Initialize Vertex AI
         try:
             vertexai.init(project=self.project_id, location=self.location)
-            self.model = GenerativeModel("gemini-1.5-pro-preview-0409")
+            self.model = GenerativeModel("gemini-2.5-pro")
         except Exception as e:
             print(f"Warning: Failed to init Vertex AI: {e}")
             self.model = None
