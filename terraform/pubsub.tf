@@ -13,7 +13,7 @@ resource "google_pubsub_subscription" "incident_subscription" {
   topic = google_pubsub_topic.incident_bus.name
 
   push_config {
-    push_endpoint = "${google_cloud_run_service.vertex_sre_agent.status[0].url}/analyze"
+    push_endpoint = "${google_cloud_run_service.vertex_sre_backend.status[0].url}/analyze"
     
     oidc_token {
       service_account_email = google_service_account.vertex_sre_sa.email

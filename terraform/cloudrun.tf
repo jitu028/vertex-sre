@@ -1,12 +1,13 @@
-resource "google_cloud_run_service" "vertex_sre_agent" {
-  name     = "vertex-sre-agent"
+# Backend Service
+resource "google_cloud_run_service" "vertex_sre_backend" {
+  name     = "vertex-sre-backend"
   location = var.region
 
   template {
     spec {
       service_account_name = google_service_account.vertex_sre_sa.email
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello" # Placeholder
+        image = "gcr.io/${var.project_id}/vertex-sre-backend:latest"
         env {
           name = "PROJECT_ID"
           value = var.project_id
@@ -19,16 +20,43 @@ resource "google_cloud_run_service" "vertex_sre_agent" {
     percent         = 100
     latest_revision = true
   }
-
-  autogenerate_revision_name = true
 }
 
-# Allow public invocations for the Webhook (Ingest)
-# In a real scenario, this should be secured, but for the Alert Webhook it might need to be public 
-# or authenticated via specific means. For now, we'll allow unauthenticated for the webhook.
-resource "google_cloud_run_service_iam_member" "public_invoker" {
-  service  = google_cloud_run_service.vertex_sre_agent.name
-  location = google_cloud_run_service.vertex_sre_agent.location
+# Frontend Service
+resource "google_cloud_run_service" "vertex_sre_frontend" {
+  name     = "vertex-sre-frontend"
+  location = var.region
+
+  template {
+    spec {
+      service_account_name = google_service_account.vertex_sre_sa.email
+      containers {
+        image = "gcr.io/${var.project_id}/vertex-sre-frontend:latest"
+        env {
+          name = "BACKEND_URL"
+          value = google_cloud_run_service.vertex_sre_backend.status[0].url
+        }
+      }
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+}
+
+# Allow unauthenticated access to Frontend (and Backend for now due to PubSub push simplified)
+resource "google_cloud_run_service_iam_member" "backend_public" {
+  service  = google_cloud_run_service.vertex_sre_backend.name
+  location = google_cloud_run_service.vertex_sre_backend.location
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+resource "google_cloud_run_service_iam_member" "frontend_public" {
+  service  = google_cloud_run_service.vertex_sre_frontend.name
+  location = google_cloud_run_service.vertex_sre_frontend.location
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
