@@ -1,0 +1,12 @@
+requests
+fastapi
+requests
+uvicorn[standard]
+google-cloud-asset
+google-cloud-logging
+google-cloud-build
+google-cloud-trace
+google-cloud-pubsub
+google-cloud-aiplatform
+pydantic
+python-dotenv

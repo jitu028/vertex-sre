@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+
+# Local logs and debug
+*.log
+debug_import.py
+
+# System
+.DS_Store
+
+# Exclude older frontend version
+frontend-v2/
