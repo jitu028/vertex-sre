@@ -98,7 +98,6 @@ You can run the agent locally for testing and development.
 ├── terraform/          # Infrastructure as Code
 ├── scripts/            # Helper scripts (Simulation)
 ├── deployment.sh       # Automation script
-└── DEPLOYMENT.md       # Detailed manual deployment guide
 ```
 
 ## 📄 License
